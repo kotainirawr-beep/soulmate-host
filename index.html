@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Valentine untuk Sayang ❤️</title>
+    <style>
+        /* 1. Background & Animation */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffc0cb, #4a0000); 
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            touch-action: manipulation;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* 2. Tombol Music Floating */
+        #btn_music {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            background: rgba(128, 0, 0, 0.8);
+            color: white;
+            border: 1.5px solid #ffc0cb;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* 3. Kontainer Kartu */
+        .container {
+            text-align: center;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 192, 203, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 320px;
+        }
+
+        h1 { color: #fff; margin-bottom: 10px; font-size: 20px; }
+
+        #game-button {
+            background-color: #800000;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: 0.1s ease;
+        }
+
+        /* 4. Tampilan Surat */
+        #surat {
+            display: none;
+            animation: popUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pesan {
+            font-size: 0.95rem;
+            color: white;
+            line-height: 1.6;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+
+        .glitter-text {
+            color: #fff;
+            animation: sparkle 1.5s infinite alternate;
+        }
+
+        @keyframes sparkle {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #ff69b4; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #ff1493; }
+        }
+
+        @keyframes popUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body onclick="forcePlay()">
+
+    <button id="btn_music" onclick="toggleMusic(event)">🎵 Play Music</button>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://media1.vocaroo.com/mp3/1guUALxmAdcy" type="audio/mpeg">
+    </audio>
+
+    <div class="container" id="main-card">
+        <div id="game-section">
+            <h1 class="glitter-text">Klik aku mbulll ❤️</h1>
+            <p style="color: #ffe4e1; font-size: 12px;">tangkep tombolnya kalo bisa wlee...</p>
+            <br>
+            <button id="game-button" onmouseover="pindahTombol()" onclick="bukaSurat()">Klik Di Sini</button>
+        </div>
+
+        <div id="surat">
+            <h1 class="glitter-text">Happy Valentine day sayang! 💖</h1>
+            <p class="pesan">
+                Terima kasih sudah hadir di hidup dedek 🤍<br>
+                Dedek sayang banget sama kamu.<br>
+                Jangan tinggalin dedek ya.
+            </p>
+            <p style="font-size: 30px; margin-top: 10px;">🌹✨🍷</p>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById("bgMusic");
+        const btnMusic = document.getElementById("btn_music");
+        let audioPlaying = false;
+        let hasInteracted = false;
+
+        // 1. Memaksa audio jalan di HP saat klik pertama di layar
+        function forcePlay() {
+            if (!hasInteracted) {
+                audio.play().then(() => {
+                    audioPlaying = true;
+                    btnMusic.innerHTML = "⏸️ Pause Music";
+                    hasInteracted = true;
+                }).catch(e => console.log("Menunggu interaksi user..."));
+            }
+        }
+
+        // 2. Fungsi Tombol Play/Pause Manual
+        function toggleMusic(event) {
+            event.stopPropagation(); // Biar gak bentrok sama forcePlay
+            if (!audioPlaying) {
+                audio.play();
+                btnMusic.innerHTML = "⏸️ Pause Music";
+                audioPlaying = true;
+            } else {
+                audio.pause();
+                btnMusic.innerHTML = "🎵 Play Music";
+                audioPlaying = false;
+            }
+            hasInteracted = true;
+        }
+
+        // 3. Efek Love & Glitter Melayang
+        function createParticles() {
+            const symbols = ['😻', '✨', '💐', '🤍'];
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 5000);
+        }
+        setInterval(createParticles, 300);
+
+        // 4. Game Logika (Pindah Tombol) - Area dibatasi biar gak ilang di HP
+        let count = 0;
+        function pindahTombol() {
+            if (count < 5) {
+                const btn = document.getElementById('game-button');
+                // Batas aman di HP (biar tombol gak lari ke luar layar)
+                const maxX = window.innerWidth - 120;
+                const maxY = window.innerHeight - 100;
+                
+                const randomX = Math.max(10, Math.random() * maxX);
+                const randomY = Math.max(10, Math.random() * maxY);
+
+                btn.style.position = 'fixed';
+                btn.style.left = randomX + 'px';
+                btn.style.top = randomY + 'px';
+                count++;
+            }
+        }
+
+        // 5. Buka Surat
+        function bukaSurat() {
+            // Pastikan lagu nyala pas surat kebuka
+            audio.play();
+            audioPlaying = true;
+            btnMusic.innerHTML = "⏸️ Pause Music";
+            
+            document.getElementById('game-section').style.display = 'none';
+            document.getElementById('surat').style.display = 'block';
+            document.getElementById('main-card').style.background = "rgba(74, 0, 0, 0.7)"; 
+        }
+    </script>
+</body>
+</html>
